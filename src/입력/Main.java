@@ -1,10 +1,10 @@
-        package 입력;
+package 입력;
 
-        public class Main {
-            static void main(String[] args) {
+public class Main {
+    static void main(String[] args) {
 
-                ConsoleUI consoleUI = new ConsoleUI();
+        ConsoleUI consoleUI = new ConsoleUI();
 
-                consoleUI.option1();
-            }
-        }
+        consoleUI.start();
+    }
+}

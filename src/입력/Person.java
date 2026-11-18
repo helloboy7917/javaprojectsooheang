@@ -1,7 +1,7 @@
 package 입력;
 
 public class Person {
-    String name;
+    private String name;
 
     public Person(String name) {
         this.name = name;
@@ -9,5 +9,9 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
