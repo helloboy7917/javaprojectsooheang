@@ -4,9 +4,9 @@ import java.util.Scanner;
 
 import static 입력.NameCompatibilityTest.Matcher;
 
-public class option {
+public class ConsoleUI {
 
-    public static void option1(){
+    public void option1(){
         Input n = new Input("",100);
         Input m = new Input("", 100);
         Scanner in = new Scanner(System.in);
