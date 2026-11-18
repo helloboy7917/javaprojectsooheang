@@ -1,5 +1,3 @@
-package 입력;
-
 public class HangulStrokeCalculator {
 
     protected static final int[] namehuk1 = {2, 4, 2, 3, 6, 5, 4, 4, 8, 2, 4, 1, 3, 6, 4, 3, 4, 4, 3};

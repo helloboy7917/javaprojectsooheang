@@ -1,5 +1,3 @@
-package 입력;
-
 public abstract class CompatibilityTest {
 
 

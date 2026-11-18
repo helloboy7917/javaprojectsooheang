@@ -1,5 +1,3 @@
-package 입력;
-
 public class Person {
     private String name;
 
