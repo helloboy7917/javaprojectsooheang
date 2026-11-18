@@ -2,7 +2,7 @@ package 입력;
 
 import java.util.Scanner;
 
-import static 입력.Matcher.Matcher;
+import static 입력.NameCompatibilityTest.Matcher;
 
 public class option {
 

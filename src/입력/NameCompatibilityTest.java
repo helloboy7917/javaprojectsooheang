@@ -1,6 +1,6 @@
 package 입력;
 
-public class Matcher {
+public class NameCompatibilityTest {
     protected static final int[] namehuk1 = {2, 4, 2, 3, 6, 5, 4, 4, 8, 2, 4, 1, 3, 6, 4, 3, 4, 4, 3};
     protected static final int[] namehuk2 = {2, 3, 3, 4, 2, 3, 3, 4, 2, 4, 5, 3, 3, 2, 4, 5, 3, 3, 1, 2, 1};
     protected static final int[] namehuk3 = {0, 2, 4, 4, 2, 5, 5, 3, 5, 7, 9, 9, 7, 9, 9, 8, 4, 4, 6, 2, 4, 1, 3, 4, 3, 4, 4, 3};
