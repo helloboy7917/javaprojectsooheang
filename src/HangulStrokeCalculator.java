@@ -6,7 +6,7 @@ public class HangulStrokeCalculator {
 
     public static int get_Namehuk(char n){
         int code = n - 44032;//'가' 를 기준으로 뺌
-        if (code<0||code>11171){
+        if (code<0 || code>11171){
             return 0;//한글이 아닌 경우 0을 반환
         }
 

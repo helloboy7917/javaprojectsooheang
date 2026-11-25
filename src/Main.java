@@ -1,8 +1,5 @@
 public class Main {
-    static void main(String[] args) {
-
-        ConsoleUI consoleUI = new ConsoleUI();
-
-        consoleUI.start();
+    public static void main(String[] args) {
+        new ConsoleUI().start();
     }
 }
