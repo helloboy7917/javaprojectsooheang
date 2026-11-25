@@ -42,8 +42,6 @@ public class ConsoleUI {
             System.out.println("\n" + MbtiDataManager.normalizeType(first) + "와 "
                     + MbtiDataManager.normalizeType(second) + "의 MBTI 궁합");
             runTest(test, Person.withMbti(first), Person.withMbti(second));
-            String notice = dataManager.getNotice();
-            if (notice != null) System.out.println("\n" + notice);
         } catch (UncheckedIOException | IllegalStateException | IllegalArgumentException e) {
             System.out.println("MBTI 궁합을 확인할 수 없습니다: " + e.getMessage());
         }
