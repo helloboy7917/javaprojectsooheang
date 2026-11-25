@@ -1,10 +1,10 @@
-import java.io.IOException;
-import java.util.Locale;
+import java.io.UncheckedIOException;
 import java.util.Scanner;
 
 public class ConsoleUI {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final MbtiDataManager dataManager = new MbtiDataManager();
 
     public void start() {
         while (true) {
@@ -29,42 +29,44 @@ public class ConsoleUI {
             return;
         }
         CompatibilityTest test = new NameCompatibilityTest();
-        System.out.println("궁합 점수: " + test.calculate(new Person(first), new Person(second)) + "%");
+        runTest(test, new Person(first), new Person(second));
     }
 
     private void showMbtiCompatibility() {
-        MbtiCompatibilityData data;
         try {
-            data = MbtiCompatibilityData.load();
-        } catch (IOException e) {
-            System.out.println("MBTI 데이터를 읽을 수 없습니다: " + e.getMessage());
-            return;
+            String first = readMbti("첫 번째 MBTI 입력: ");
+            if (first == null) return;
+            String second = readMbti("두 번째 MBTI 입력: ");
+            if (second == null) return;
+            CompatibilityTest test = new MbtiCompatibilityTest(dataManager);
+            System.out.println("\n" + MbtiDataManager.normalizeType(first) + "와 "
+                    + MbtiDataManager.normalizeType(second) + "의 MBTI 궁합");
+            runTest(test, Person.withMbti(first), Person.withMbti(second));
+            String notice = dataManager.getNotice();
+            if (notice != null) System.out.println("\n" + notice);
+        } catch (UncheckedIOException | IllegalStateException | IllegalArgumentException e) {
+            System.out.println("MBTI 궁합을 확인할 수 없습니다: " + e.getMessage());
         }
-        String first = readMbti("첫 번째 MBTI 입력: ", data);
-        if (first == null) return;
-        String second = readMbti("두 번째 MBTI 입력: ", data);
-        if (second == null) return;
-
-        String key = first.compareTo(second) <= 0 ? first + "-" + second : second + "-" + first;
-        MbtiCompatibilityData.Combination combination = data.combinations.get(key);
-        if (combination == null) {
-            System.out.println("해당 MBTI 조합을 찾을 수 없습니다.");
-            return;
-        }
-        System.out.println("\n" + first + "와 " + second + "의 MBTI 궁합");
-        System.out.println("\n좋은 점:");
-        for (String point : combination.goodPoints) System.out.println("- " + point);
-        System.out.println("\n주의할 점:");
-        for (String point : combination.cautionPoints) System.out.println("- " + point);
-        if (data.meta.notice != null) System.out.println("\n" + data.meta.notice);
     }
 
-    private String readMbti(String prompt, MbtiCompatibilityData data) {
+    private void runTest(CompatibilityTest test, Person first, Person second) {
+        CompatibilityResult result = test.calculate(first, second);
+        if (result.getScore() != null) System.out.println("궁합 점수: " + result.getScore() + "%");
+        if (!result.getGoodPoints().isEmpty()) {
+            System.out.println("\n좋은 점:");
+            for (String point : result.getGoodPoints()) System.out.println("- " + point);
+        }
+        if (!result.getCautionPoints().isEmpty()) {
+            System.out.println("\n주의할 점:");
+            for (String point : result.getCautionPoints()) System.out.println("- " + point);
+        }
+    }
+
+    private String readMbti(String prompt) {
         while (true) {
             String input = readLine(prompt);
             if (input == null) return null;
-            String type = input.toUpperCase(Locale.ROOT);
-            if (data.types.containsKey(type)) return type;
+            if (dataManager.isValidType(input)) return input;
             System.out.println("올바른 MBTI 유형을 입력해 주세요. 예: INFP, ESTJ");
         }
     }

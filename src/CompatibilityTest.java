@@ -1,5 +1,5 @@
 public abstract class CompatibilityTest {
 
 
-    public abstract int calculate(Person a, Person b);
+    public abstract CompatibilityResult calculate(Person a, Person b);
 }

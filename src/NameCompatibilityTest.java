@@ -1,7 +1,7 @@
 public class NameCompatibilityTest extends CompatibilityTest {
 
     @Override
-    public int calculate(Person a, Person b) {
+    public CompatibilityResult calculate(Person a, Person b) {
 
         char[] ch1 = a.getName().toCharArray();
         char[] ch2 = b.getName().toCharArray();
@@ -29,7 +29,7 @@ public class NameCompatibilityTest extends CompatibilityTest {
         }
 
         int score = arr[0] * 10 + arr[1];
-        return score;
+        return CompatibilityResult.forScore(score);
 
 
     }
