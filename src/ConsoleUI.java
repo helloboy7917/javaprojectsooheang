@@ -25,9 +25,14 @@ public class ConsoleUI {
             return;
         }
         while (true) {
-            System.out.println("\n===== FRIEND COMPATIBILITY =====");
-            System.out.println("1. 친구 등록\n2. 등록된 친구 목록\n3. 친구 정보 관리\n4. 궁합 테스트\n5. 궁합 순위\n0. 종료");
-            String choice = read("선택: ");
+            System.out.println("\n========================================");
+            System.out.println("          FRIEND COMPATIBILITY");
+            System.out.println("             친구 궁합 테스트");
+            System.out.println("========================================");
+            System.out.println("  1. 친구 등록\n  2. 등록된 친구 목록\n  3. 친구 정보 관리");
+            System.out.println("  4. 궁합 테스트\n  5. 궁합 순위\n\n  0. 종료");
+            System.out.println("----------------------------------------");
+            String choice = read("  메뉴 선택 > ");
             if (choice == null || choice.equals("0")) return;
             try {
                 switch (choice) {
@@ -45,7 +50,7 @@ public class ConsoleUI {
     }
 
     private void register() throws IOException {
-        System.out.println("\n===== 친구 등록 =====");
+        System.out.println("\n---------- 친구 등록 ----------");
         String name = required("이름: ");
         if (name == null) return;
         String date = dateInput("생년월일 (YYYY-MM-DD, 생략 가능): ", true);
@@ -53,11 +58,12 @@ public class ConsoleUI {
         String mbti = mbtiInput("MBTI (생략 가능): ", true);
         if (mbti == null) return;
         friends.add(name, date.isEmpty() ? null : LocalDate.parse(date), mbti);
-        System.out.println("친구 등록이 완료되었습니다.");
+        System.out.println("\n  [완료] 친구 등록이 완료되었습니다.");
     }
 
     private void listFriends() {
         ArrayList<Friend> list = friends.getFriends();
+        System.out.println("\n---------- 친구 목록 ----------");
         if (list.isEmpty()) System.out.println("등록된 친구가 없습니다.");
         for (Friend friend : list) printFriend(friend);
     }
@@ -69,7 +75,7 @@ public class ConsoleUI {
     }
 
     private void manage() throws IOException {
-        String action = read("1. 상세 조회  2. 수정  3. 삭제  0. 돌아가기: ");
+        String action = read("\n---------- 친구 정보 관리 ----------\n  1. 상세 조회\n  2. 수정\n  3. 삭제\n  0. 돌아가기\n\n  메뉴 선택 > ");
         if (action == null || action.equals("0")) return;
         if (!action.equals("1") && !action.equals("2") && !action.equals("3")) {
             System.out.println("메뉴 번호를 다시 입력해 주세요."); return;
@@ -121,10 +127,10 @@ public class ConsoleUI {
     }
 
     private void compatibility() {
-        String type = read("\n1. 이름 획수 궁합  2. MBTI 궁합  3. 생년월일 궁합  0. 돌아가기: ");
+        String type = read("\n---------- 궁합 테스트 ----------\n  1. 이름 획수 궁합\n  2. MBTI 궁합\n  3. 생년월일 궁합\n  0. 돌아가기\n\n  메뉴 선택 > ");
         if (type == null || type.equals("0")) return;
         if (!type.equals("1") && !type.equals("2") && !type.equals("3")) { System.out.println("메뉴 번호를 확인해 주세요."); return; }
-        String method = read("1. 직접 정보 입력  2. 등록된 친구 정보 사용  0. 돌아가기: ");
+        String method = read("\n---------- 검사 방식 선택 ----------\n  1. 직접 정보 입력\n  2. 등록된 친구 정보 사용\n  0. 돌아가기\n\n  메뉴 선택 > ");
         if (method == null || method.equals("0")) return;
         Person a, b;
         if (method.equals("2")) {
@@ -173,25 +179,25 @@ public class ConsoleUI {
     }
 
     private void printResult(CompatibilityResult result) {
-        if (result.getScore() != null) System.out.println("궁합 점수: " + result.getScore() + "점");
+        if (result.getScore() != null) System.out.println("\n  ★ 궁합 점수: " + result.getScore() + "점 ★");
         if (!result.getGoodPoints().isEmpty()) {
-            System.out.println("좋은 점:");
+            System.out.println("\n  [ 좋은 점: ]");
             for (String point : result.getGoodPoints()) System.out.println("- " + point);
         }
         if (!result.getCautionPoints().isEmpty()) {
-            System.out.println("주의할 점:");
+            System.out.println("\n  [ 주의할 점: ]");
             for (String point : result.getCautionPoints()) System.out.println("- " + point);
         }
     }
 
     private void ranking() {
-        String choice = read("1. 이름 궁합 순위  2. 생년월일 궁합 순위  0. 돌아가기: ");
+        String choice = read("\n---------- 궁합 순위 ----------\n  1. 이름 궁합 순위\n  2. 생년월일 궁합 순위\n  0. 돌아가기\n\n  메뉴 선택 > ");
         if (choice == null || choice.equals("0")) return;
         if (!choice.equals("1") && !choice.equals("2")) { System.out.println("메뉴 번호를 확인해 주세요."); return; }
         ArrayList<CompatibilityRankingService.Ranking> rows = new CompatibilityRankingService().calculate(friends.getFriends(), choice.equals("2"));
-        System.out.println("\n===== 궁합 TOP 5 =====");
+        System.out.println("\n========================================\n             궁합 TOP 10\n========================================");
         if (rows.isEmpty()) System.out.println("순위를 계산할 친구가 충분하지 않습니다.");
-        for (int i = 0; i < rows.size() && i < 5; i++) {
+        for (int i = 0; i < rows.size() && i < 10; i++) {
             CompatibilityRankingService.Ranking row = rows.get(i);
             System.out.println(row.rank + "위  " + row.first.getName() + "(ID " + row.first.getId() + ") ↔ "
                     + row.second.getName() + "(ID " + row.second.getId() + ")  " + row.score + "점");

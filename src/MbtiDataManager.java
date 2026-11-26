@@ -46,7 +46,4 @@ public class MbtiDataManager {
         return combination;
     }
 
-    public String getNotice() {
-        return data().meta.notice;
-    }
 }

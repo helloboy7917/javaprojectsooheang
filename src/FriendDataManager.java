@@ -81,38 +81,45 @@ public class FriendDataManager {
     }
 
     public Friend findById(int id) {
-        for (Friend friend : store.friends) if (friend.getId() == id) return friend;
-        return null;
+        int index = findIndex(id);
+        return index < 0 ? null : store.friends.get(index);
     }
 
     public void add(String name, LocalDate date, String mbti) throws IOException {
         validate(name, date, mbti);
         Store updated = copy();
         updated.friends.add(new Friend(updated.nextId++, name.trim(), date, normalize(mbti)));
-        save(updated);
-        store = updated;
+        saveChanges(updated);
     }
 
     public void update(int id, String name, LocalDate date, String mbti) throws IOException {
         validate(name, date, mbti);
+        int index = findIndex(id);
+        if (index < 0) throw new IllegalArgumentException("친구를 찾을 수 없습니다.");
         Store updated = copy();
-        for (int i = 0; i < updated.friends.size(); i++) {
-            if (updated.friends.get(i).getId() == id) {
-                updated.friends.set(i, new Friend(id, name.trim(), date, normalize(mbti)));
-                save(updated); store = updated; return;
-            }
-        }
-        throw new IllegalArgumentException("친구를 찾을 수 없습니다.");
+        updated.friends.set(index, new Friend(id, name.trim(), date, normalize(mbti)));
+        saveChanges(updated);
     }
 
     public void delete(int id) throws IOException {
+        int index = findIndex(id);
+        if (index < 0) throw new IllegalArgumentException("친구를 찾을 수 없습니다.");
         Store updated = copy();
-        for (int i = 0; i < updated.friends.size(); i++) {
-            if (updated.friends.get(i).getId() == id) {
-                updated.friends.remove(i); save(updated); store = updated; return;
-            }
+        updated.friends.remove(index);
+        saveChanges(updated);
+    }
+
+    private int findIndex(int id) {
+        for (int i = 0; i < store.friends.size(); i++) {
+            if (store.friends.get(i).getId() == id) return i;
         }
-        throw new IllegalArgumentException("친구를 찾을 수 없습니다.");
+        return -1;
+    }
+
+    // 저장에 성공한 경우에만 메모리의 목록을 교체한다.
+    private void saveChanges(Store updated) throws IOException {
+        save(updated);
+        store = updated;
     }
 
     private Store copy() {

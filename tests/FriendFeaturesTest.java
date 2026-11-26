@@ -118,6 +118,31 @@ public class FriendFeaturesTest {
         assertTrue(tied);
     }
 
+    @Test public void consoleShowsAtMostTenRankingPairs() throws Exception {
+        Path path = temporary.getRoot().toPath().resolve("friends.json");
+        FriendDataManager manager = new FriendDataManager(path);
+        for (int i = 0; i < 6; i++) manager.add("친구" + i, null, null);
+        assertEquals(15, new CompatibilityRankingService().calculate(manager.getFriends(), false).size());
+        String output = runConsole(path, "5\n1\n0\n");
+        assertTrue(output.contains("궁합 TOP 10"));
+        int rankingLines = 0;
+        for (String line : output.split("\\R")) {
+            if (line.matches("[0-9]+위  .*")) rankingLines++;
+        }
+        assertEquals(10, rankingLines);
+    }
+
+    @Test public void consoleKeepsOrClearsOptionalFieldsWhenEditing() throws Exception {
+        Path path = temporary.getRoot().toPath().resolve("friends.json");
+        FriendDataManager manager = new FriendDataManager(path);
+        manager.add("친구", LocalDate.of(2000, 2, 29), "INFP");
+        runConsole(path, "3\n2\n친구\n\n\n-\n0\n");
+        Friend saved = new FriendDataManager(path).findById(1);
+        assertEquals("친구", saved.getName());
+        assertEquals(LocalDate.of(2000, 2, 29), saved.getBirthDate());
+        assertNull(saved.getMbti());
+    }
+
     private String runConsole(Path path, String input) throws Exception {
         java.io.InputStream oldIn = System.in; PrintStream oldOut = System.out;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
