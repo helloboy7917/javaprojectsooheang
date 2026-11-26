@@ -1,4 +1,6 @@
 import java.io.UncheckedIOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -8,14 +10,54 @@ public class ConsoleUI {
 
     public void start() {
         while (true) {
-            System.out.println("\n1. 이름 궁합  2. MBTI 궁합  0. 종료");
+            System.out.println("\n===== 친구 궁합 테스트 =====");
+            System.out.println("1. 이름 획수 궁합\n2. MBTI 궁합\n3. 생년월일 궁합\n0. 종료");
             String choice = readLine("선택: ");
             if (choice == null || choice.equals("0")) return;
             switch (choice) {
                 case "1": showNameCompatibility(); break;
                 case "2": showMbtiCompatibility(); break;
-                default: System.out.println("0, 1, 2 중에서 선택해 주세요.");
+                case "3": showBirthCompatibility(); break;
+                default: System.out.println("0, 1, 2, 3 중에서 선택해 주세요.");
             }
+        }
+    }
+
+    private void showBirthCompatibility() {
+        String firstName = readName("첫 번째 사람의 이름 입력: ");
+        if (firstName == null) return;
+        LocalDate firstDate = readBirthDate("첫 번째 사람의 생년월일 입력 (YYYY-MM-DD): ");
+        if (firstDate == null) return;
+        String secondName = readName("두 번째 사람의 이름 입력: ");
+        if (secondName == null) return;
+        LocalDate secondDate = readBirthDate("두 번째 사람의 생년월일 입력 (YYYY-MM-DD): ");
+        if (secondDate == null) return;
+        CompatibilityTest test = new BirthCompatibilityTest();
+        System.out.println("\n" + firstName + "와 " + secondName + "의 생년월일 궁합");
+        runTest(test, new Person(firstName, firstDate), new Person(secondName, secondDate));
+    }
+
+    private String readName(String prompt) {
+        while (true) {
+            String name = readLine(prompt);
+            if (name == null || !name.isEmpty()) return name;
+            System.out.println("이름을 입력해 주세요.");
+        }
+    }
+
+    private LocalDate readBirthDate(String prompt) {
+        while (true) {
+            String input = readLine(prompt);
+            if (input == null) return null;
+            if (input.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
+                try {
+                    LocalDate date = LocalDate.parse(input);
+                    if (date.getYear() >= 1) return date;
+                } catch (DateTimeParseException ignored) {
+                    // Ask for another date below.
+                }
+            }
+            System.out.println("올바른 날짜를 YYYY-MM-DD 형식으로 입력해 주세요.");
         }
     }
 
