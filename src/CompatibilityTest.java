@@ -5,6 +5,13 @@ public abstract class CompatibilityTest {
         if (digitsA == null || digitsB == null || digitsA.length + digitsB.length < 2) {
             throw new IllegalArgumentException("계산하려면 숫자가 두 개 이상 필요합니다.");
         }
+        // 숫자 배열을 사전순으로 배치하면 입력 순서와 상관없이 같은 점수가 나온다.
+        int comparison = 0;
+        for (int i = 0; i < Math.min(digitsA.length, digitsB.length); i++) {
+            if (digitsA[i] != digitsB[i]) { comparison = Integer.compare(digitsA[i], digitsB[i]); break; }
+        }
+        if (comparison == 0) comparison = Integer.compare(digitsA.length, digitsB.length);
+        if (comparison > 0) { int[] temp = digitsA; digitsA = digitsB; digitsB = temp; }
         int[] digits = new int[digitsA.length + digitsB.length];
         int index = 0;
         for (int i = 0; i < Math.max(digitsA.length, digitsB.length); i++) {

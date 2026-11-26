@@ -1,6 +1,8 @@
 ### IntelliJ IDEA ###
 out/
 target/
+/data/friends.json
+/data/friends.json.tmp
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin

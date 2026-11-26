@@ -7,8 +7,11 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 public class CompatibilityRegressionTest {
+    @Rule public TemporaryFolder temporary = new TemporaryFolder();
     @Test
     public void nameResultUsesExistingAlgorithmThroughBaseClass() {
         CompatibilityTest test = new NameCompatibilityTest();
@@ -57,9 +60,9 @@ public class CompatibilityRegressionTest {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            System.setIn(new ByteArrayInputStream("2\nINVALID\nenfp\nintj\n0\n".getBytes(StandardCharsets.UTF_8)));
+            System.setIn(new ByteArrayInputStream("4\n2\n1\nINVALID\nenfp\nintj\n0\n".getBytes(StandardCharsets.UTF_8)));
             System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8.name()));
-            new ConsoleUI().start();
+            new ConsoleUI(temporary.getRoot().toPath().resolve("friends.json")).start();
         } finally {
             System.setIn(originalIn);
             System.setOut(originalOut);
@@ -77,7 +80,7 @@ public class CompatibilityRegressionTest {
         Person first = new Person("A", LocalDate.of(2007, 3, 15));
         Person second = new Person("B", LocalDate.of(2007, 4, 12));
         assertEquals(Integer.valueOf(44), test.calculate(first, second).getScore());
-        assertEquals(Integer.valueOf(86), test.calculate(second, first).getScore());
+        assertEquals(Integer.valueOf(44), test.calculate(second, first).getScore());
         Method method = BirthCompatibilityTest.class.getDeclaredMethod("toDigits", LocalDate.class);
         method.setAccessible(true);
         assertArrayEquals(new int[] {2, 0, 0, 7, 0, 3, 1, 5}, (int[]) method.invoke(test, first.getBirthDate()));
@@ -105,10 +108,10 @@ public class CompatibilityRegressionTest {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            String input = "3\nA\n\n2007/03/15\n2007-02-29\n2000-02-29\nB\n2007-04-12\n0\n";
+            String input = "4\n3\n1\nA\n\n2007/03/15\n2007-02-29\n2000-02-29\nB\n2007-04-12\n0\n";
             System.setIn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
             System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8.name()));
-            new ConsoleUI().start();
+            new ConsoleUI(temporary.getRoot().toPath().resolve("friends.json")).start();
         } finally {
             System.setIn(originalIn);
             System.setOut(originalOut);
